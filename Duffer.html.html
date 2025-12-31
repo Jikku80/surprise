@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy New Year</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ===== VIDEO BACKGROUND ===== */
+#bg-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    filter: brightness(0.45) blur(1px);
+}
+
+/* Dark overlay for readability */
+#video-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,20,0.45);
+    z-index: 1;
+}
+
+/* ===== STORY IMAGE ===== */
+#story-scene {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    opacity: 0;
+    transition: opacity 10s ease;
+    z-index: 5;
+}
+#story-scene img {
+    width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.7);
+}
+
+/* ===== TEXT ===== */
+#message-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    max-width: 900px;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    line-height: 1.85;
+    color: #FFD88A;
+    text-shadow:
+        0 0 10px rgba(255,216,138,0.35),
+        0 0 30px rgba(255,216,138,0.25);
+    z-index: 6;
+}
+
+#message-container p {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 3s ease, transform 3s ease;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎥 BACKGROUND VIDEO -->
+<video id="bg-video" autoplay muted loop playsinline>
+    <source src="background.mp4" type="video/mp4">
+</video>
+<div id="video-overlay"></div>
+
+<div id="story-scene">
+    <img id="story-img" src="">
+</div>
+
+<div id="message-container"></div>
+
+<audio id="bg-audio" src="background-music.mp3" loop></audio>
+
+<script>
+/* ===== MUSIC PLAY ON CLICK ===== */
+const audio = document.getElementById("bg-audio");
+document.addEventListener("click", () => {
+    audio.play().catch(()=>{});
+}, { once: true });
+</script>
+
+<script>
+/* ===== TEXT & STORY LOGIC ===== */
+const messageContainer = document.getElementById("message-container");
+const storyImg = document.getElementById("story-img");
+const storyScene = document.getElementById("story-scene");
+
+const lines = [
+"Hey Suprina, Happy New Year. ✨",
+"Wishing you an amazing year ahead filled with happiness, success, and everything you dream of. No matter what, every New Year reminds me of you Look It’s been 11 years since we first met, and through all these years, one thing has never changed: I am still deeply, truly in love with you. Through every up and down, every pause and reunion, every silence and every conversation, my heart has always chosen you. I feel incredibly lucky to have you in my life.",
+"Do you remember that New Year’s Day at school, 11 years ago, when you gave me my very first New Year gift? That moment stayed with me forever. From that day on, I felt blessed to have you by my side.",
+"Thank you for loving me all these years. You never needed to say it out loud — the way you cared for me, the way you stood by me, your actions always said everything.",
+"I want you to know something very important today: I am so proud of the woman you’ve become.",
+"You are strong, responsible, and full of love. The way you work hard, take care of your brother and sister, support your mother, and carry your responsibilities with such grace truly amazes me. You make your family proud every single day.",
+"I know I hurt you many times when you needed me emotionally. I wanted to be there, but fear held me back. I said why you don’t spend your time with your mom and why you were meeting me when you had your guy. I was worried that meeting me could ruin your relationship.",
+"I thought I was protecting you, by not comming in between your relationship but now I realize I should have stood beside you, held your hand, and protected your heart. I regret that deeply, and I’m truly sorry.",
+"We didn’t talk for four years. Our paths didn’t cross. And yet, when we met again by chance, it felt like destiny quietly bringing us back together.",
+"In that moment, I realized something clearly: the love between us never disappeared. Somewhere deep inside, we both still feel it. We still find comfort in each other’s presence.",
+"I know you want to be alone right now. But look at me — I’m lonely too. What if we choose to be alone together? What if we build a small world that belongs only to us, where love feels safe, hearts feel light, and happiness feels real?",
+"I want to be with you forever. I want to see every phase of my life with you and every phase of yours. I don’t want to lose you again before we even begin.",
+"I won’t just promise you happiness — I’ll work for it, every day. I promise you this from my heart: I will never disrespect you, not even in anger.",
+"I will always be there for you, even if the whole world is against you. I will stand by your side, protect your heart, and put your happiness before mine.",
+"I want us to grow together, glow together, smile together, and sleep every night with peaceful hearts. I’ll never let you sleep with a heavy heart.",
+"I want to grow old with you, build a relationship where love feels warm, safe, and forever.",
+"And most of all, I promise to protect your heart and the beautiful childlike joy in you that comes alive when you’re with me. So i wish this new year may be we ge together?"
+];
+
+const images = {
+    2:"in-love.jpg.jpg",
+    6:"separation.jpg.jpg",
+    8:"holding-hands.jpg.jpg",
+    11:"relationship.jpg.jpg",
+    13:"married.jpg.jpg",
+    15:"old-couple.jpg"
+};
+
+let i = 0;
+function showLine(){
+    if(i >= lines.length) return;
+
+    messageContainer.innerHTML = "";
+    const p = document.createElement("p");
+    p.textContent = lines[i];
+    messageContainer.appendChild(p);
+
+    setTimeout(() => {
+        p.style.opacity = 1;
+        p.style.transform = "translateY(0)";
+    }, 100);
+
+    if(images[i]){
+        storyImg.src = images[i];
+        storyScene.style.opacity = 1;
+        setTimeout(() => storyScene.style.opacity = 0, 12000);
+    } else {
+        storyScene.style.opacity = 0;
+    }
+
+    i++;
+    setTimeout(showLine, 12000);
+}
+
+setTimeout(showLine, 2000);
+</script>
+
+</body>
+</html>

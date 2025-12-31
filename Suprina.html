@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy New Year</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000016;
+    font-family: Arial, sans-serif;
+}
+
+/* Moon */
+#moon {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle at 30% 30%, #f5f5f5, #bdbdbd 60%, #888);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(255,255,255,0.4);
+    z-index: 5;
+}
+
+/* Story Image */
+#story-scene {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    opacity: 0;
+    transition: opacity 10s ease; /* slower fade-in/out */
+    z-index: 8;
+}
+#story-scene img {
+    width: 100%;
+    border-radius: 14px;
+}
+
+/* Text */
+#message-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 900px;
+    text-align: center;
+    font-size: 22px;
+    line-height: 1.7;
+    color: #FFD700; /* golden text */
+    z-index: 10;
+}
+#message-container p {
+    opacity: 0;
+    transition: opacity 12s ease; /* default fade-in for slower lines */
+}
+</style>
+</head>
+
+<body>
+
+<div id="moon"></div>
+
+<div id="story-scene">
+    <img id="story-img" src="">
+</div>
+
+<div id="message-container"></div>
+
+<canvas id="fireworks"></canvas>
+<audio id="bg-audio" src="background-music.mp3" loop></audio>
+
+<script>
+const audio = document.getElementById("bg-audio");
+
+document.addEventListener("click", () => {
+    audio.play().catch(err => console.log("Audio play failed:", err));
+}, { once: true }); // Play on first click only
+</script>
+
+<script>
+// ================= FIREWORKS =================
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Particle {
+    constructor(x,y,color,dx,dy){
+        this.x=x; this.y=y;
+        this.color=color;
+        this.dx=dx; this.dy=dy;
+        this.life=60;
+        this.opacity=1;
+    }
+    update(){
+        this.x+=this.dx;
+        this.y+=this.dy;
+        this.dy+=0.02;
+        this.life--;
+        this.opacity-=0.015;
+    }
+    draw(){
+        ctx.globalAlpha=this.opacity;
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,2,0,Math.PI*2);
+        ctx.fillStyle=this.color;
+        ctx.fill();
+        ctx.globalAlpha=1;
+    }
+}
+
+let particles=[];
+function firework(){
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height/2;
+    const colors=["#ff4d4d","#4dff4d","#4d4dff","#ffff4d","#ff66ff","#00ffff"];
+    for(let i=0;i<100;i++){
+        const a=Math.random()*Math.PI*2;
+        const s=Math.random()*4+2;
+        particles.push(new Particle(x,y,colors[Math.floor(Math.random()*colors.length)],Math.cos(a)*s,Math.sin(a)*s));
+    }
+}
+
+function animate(){
+    ctx.fillStyle="rgba(0,0,22,0.2)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    if(Math.random()<0.03) firework();
+    for(let i=particles.length-1;i>=0;i--){
+        particles[i].update();
+        particles[i].draw();
+        if(particles[i].life<=0) particles.splice(i,1);
+    }
+    requestAnimationFrame(animate);
+}
+animate();
+
+// ================= TEXT & STORY =================
+const messageContainer=document.getElementById("message-container");
+const storyImg=document.getElementById("story-img");
+const storyScene=document.getElementById("story-scene");
+
+const lines=[
+"Hey Suprina, Happy New Year. ✨",
+"Wishing you an amazing year ahead filled with happiness, success, and everything you dream of. No matter what, every New Year reminds me of you Look It’s been 11 years since we first met, and through all these years, one thing has never changed: I am still deeply, truly in love with you. Through every up and down, every pause and reunion, every silence and every conversation, my heart has always chosen you. I feel incredibly lucky to have you in my life.",
+"Do you remember that New Year’s Day at school, 11 years ago, when you gave me my very first New Year gift? That moment stayed with me forever. From that day on, I felt blessed to have you by my side.",
+"Thank you for loving me all these years. You never needed to say it out loud — the way you cared for me, the way you stood by me, your actions always said everything.",
+"I want you to know something very important today: I am so proud of the woman you’ve become.",
+"You are strong, responsible, and full of love. The way you work hard, take care of your brother and sister, support your mother, and carry your responsibilities with such grace truly amazes me. You make your family proud every single day.",
+"I know I hurt you many times when you needed me emotionally. I wanted to be there, but fear held me back. I said why you don’t spend your time with your mom and why you were meeting me when you had your guy. I was worried that meeting me could ruin your relationship.",
+"I thought I was protecting you, by not comming in between your relationship but now I realize I should have stood beside you, held your hand, and protected your heart. I regret that deeply, and I’m truly sorry.",
+"We didn’t talk for four years. Our paths didn’t cross. And yet, when we met again by chance, it felt like destiny quietly bringing us back together.",
+"In that moment, I realized something clearly: the love between us never disappeared. Somewhere deep inside, we both still feel it. We still find comfort in each other’s presence.",
+"I know you want to be alone right now. But look at me — I’m lonely too. What if we choose to be alone together? What if we build a small world that belongs only to us, where love feels safe, hearts feel light, and happiness feels real?",
+"I want to be with you forever. I want to see every phase of my life with you and every phase of yours. I don’t want to lose you again before we even begin.",
+"I won’t just promise you happiness — I’ll work for it, every day. I promise you this from my heart: I will never disrespect you, not even in anger.",
+"I will always be there for you, even if the whole world is against you. I will stand by your side, protect your heart, and put your happiness before mine.",
+"I want us to grow together, glow together, smile together, and sleep every night with peaceful hearts. I’ll never let you sleep with a heavy heart.",
+"I want to grow old with you, build a relationship where love feels warm, safe, and forever.",
+"And most of all, I promise to protect your heart and the beautiful childlike joy in you that comes alive when you’re with me. So i wish this new year may be we ge together?"
+];
+
+// Image mapping
+const images={
+    2:"in-love.jpg.jpg",
+    6:"separation.jpg.jpg",
+    8:"holding-hands.jpg.jpg",
+    11:"relationship.jpg.jpg",
+    13:"married.jpg.jpg",
+    15:"old-couple.jpg"
+};
+
+let i = 0;
+function showLine(){
+    if(i >= lines.length) return;
+
+    messageContainer.innerHTML = "";
+    const p = document.createElement("p");
+    p.textContent = lines[i];
+
+    // First line faster
+    if(i === 0){
+        p.style.transition = "opacity 4s ease"; // faster fade for first line
+        setTimeout(() => p.style.opacity = 1, 100);
+        messageContainer.appendChild(p);
+        i++;
+        setTimeout(showLine, 4000); // faster display
+        return;
+    }
+
+    // Other lines slower
+    p.style.transition = "opacity 14s ease"; // slower fade
+    messageContainer.appendChild(p);
+    setTimeout(() => p.style.opacity = 1, 100);
+
+    // Handle images
+    if(images[i]){
+        storyImg.src = images[i];
+        storyScene.style.opacity = 1;
+        setTimeout(() => { storyScene.style.opacity = 0; }, 12000); // slow fade out
+    } else {
+        storyScene.style.opacity = 0;
+    }
+
+    i++;
+    setTimeout(showLine, 12000); // slow display for remaining lines
+}
+
+// Start after 2s
+setTimeout(showLine, 2000);
+</script>
+
+</body>
+</html>
